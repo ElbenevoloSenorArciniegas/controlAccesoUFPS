@@ -45,7 +45,7 @@ class PersonaFacade {
      $personaDao =$FactoryDao->getpersonaDao(self::getDataBaseDefault());
      $rtn = $personaDao->insert($persona);
      $personaDao->close();
-     return $rtn;
+     return $persona;
   }
 
   /**
@@ -65,6 +65,7 @@ class PersonaFacade {
      return $result;
   }
 
+
   /**
    * Modifica los atributos de un objeto Persona  ya existente en base de datos.
    * Puede recibir NullPointerException desde los métodos del Dao
@@ -81,6 +82,7 @@ class PersonaFacade {
      $personaDao =$FactoryDao->getpersonaDao(self::getDataBaseDefault());
      $personaDao->update($persona);
      $personaDao->close();
+     return $persona;
   }
 
   /**

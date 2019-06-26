@@ -8,9 +8,12 @@
 
 var rutaBack = '../back/controller/Router.php';
 currentPersona = "Error";
+CURRENT_USER = -1;
+RFID_A_REGISTRAR = -1;
+
 
 function inicio(){
-    cargaContenido("main",'inicio.html'); 
+    getLogged();
 }
 
 /** Valida los campos requeridos en un formulario
@@ -33,7 +36,7 @@ function preAutorizacionInsert(idForm){
 	formData = {};
     formData["ruta"]="AutorizacionInsert";
     formData["codigo"]=currentPersona;
-    formData["autorizadoPor"]="1151345";
+    formData["autorizadoPor"]=CURRENT_USER;
     formData["entrada"]=EntradaList.value;
     formData["date"]=datepicker.value;
     formData["horaIni"]=horaIni.value;
@@ -270,8 +273,18 @@ function preIntentoList(container){
                 var tr = document.createElement("TR");
                 //
                 var td = document.createElement("TD");
-                textNode = document.createTextNode(Intento.persona_codigo);
-                td.appendChild(textNode);
+                var cod = Intento.persona_codigo.split("SPLIT");
+                if(cod[0]==0){
+                    href="javascript:registroPersona('"+cod[1]+"')";
+                    var a = document.createElement('A');
+                    a.setAttribute('href', href);
+                    var textNode = document.createTextNode("No registrado");
+                    a.appendChild(textNode);
+                    node = a;
+                }else{
+                    node = document.createTextNode(Intento.persona_codigo);
+                }
+                td.appendChild(node);
                 tr.appendChild(td);
                 //
                 var td = document.createElement("TD");
@@ -303,6 +316,8 @@ function preIntentoList(container){
                     "language": {
                         "url": "http://cdn.datatables.net/plug-ins/1.10.19/i18n/Spanish.json"
                     }
+                    ,
+                    "order": [[ 1, "desc" ]]
                 } );
          }else{
             alert(json[0].msg);
@@ -316,9 +331,13 @@ function preIntentoList(container){
 function prePersonaInsert(idForm){
      //Haga aquÃ­ las validaciones necesarias antes de enviar el formulario.
 	if(validarForm(idForm)){
- 	var formData=$('#'+idForm).serialize();
+ 	 formData={};
+     formData["codigo"]=cod.value;
+     formData["nombre"]=nombre.value;
+     formData["rfid"]=RFID_A_REGISTRAR;
+     formData["img"]="noImg";
      formData["ruta"]="PersonaInsert";
- 	enviar(formData,rutaBack,postPersonaInsert);
+ 	 enviar(formData,rutaBack,postPersonaInsert);
  	}else{
  		alert("Debe llenar los campos requeridos");
  	}
@@ -329,7 +348,9 @@ function prePersonaInsert(idForm){
      //Consideramos buena prÃ¡ctica no manejar cÃ³digo HTML antes de este punto.
  		if(state=="success"){
                      if(result=="true"){            
- 			alert("Persona registrado con Ã©xito");
+ 			alert("Persona registrado con Éxito");
+            btnCerrarModal.click();
+            preIntentoList("main");
                      }else{
                         alert("Hubo un errror en la inserciÃ³n ( u.u)\n"+result);
                      } 		}else{
@@ -396,13 +417,45 @@ function postPersonaSelect(result,state){
 function login(idForm){
      //Haga aquÃ­ las validaciones necesarias antes de enviar el formulario.
     if(validarForm(idForm)){
-    var formData=$('#'+idForm).serialize();
+     formData={};
+     formData["cod"]=loginCodigo.value;
+     formData["pass"]=loginPass.value;
      formData["ruta"]="login";
     enviar(formData,rutaBack,postLogin);
     }else{
         alert("Debe llenar los campos requeridos");
     }
 }
+
+function postLogin(result,state){
+     //Maneje aquÃ­ la respuesta del servidor.
+     //Consideramos buena prÃ¡ctica no manejar cÃ³digo HTML antes de este punto.
+     var sesTxt=result;
+     result=JSON.parse(result);
+        if(state=="success"){
+             if(result.msg=="true"){
+                CURRENT_USER=result.obj;
+                sessionStorage.CURRENT_USER = sesTxt;
+                getLogged();
+             }else{
+                alert("Datos incorrectos o no registrados");
+             }      
+        }else{
+            alert("Hubo un errror interno ( u.u)\n"+result);
+        }
+}
+
+function getLogged() {
+    if(sessionStorage.CURRENT_USER!=null){
+        CURRENT_USER = JSON.parse(sessionStorage.CURRENT_USER).obj;
+    }
+    if(CURRENT_USER != -1){
+        cargaContenido("main","inicio.html");
+    }else{
+        cargaContenido("main","login.html");
+    }
+}
+
 
 function nuevaAutorizacion() {
     cargaContenido("main","AutorizacionInsert.html");
@@ -422,6 +475,11 @@ function validarAgregar() {
         btnAgregar.href="#";
         btnAgregar.classList.remove("principal");
     }
+}
+
+function registroPersona(rfid){
+    btnAbrirModal.click();
+    RFID_A_REGISTRAR=rfid;
 }
 
 //That's all folks!

@@ -70,6 +70,27 @@ $codigo=$identificador->getCodigo()->getCodigo();
       }
   }
 
+  public function login($identificador){
+      $codigo=$identificador->getCodigo();
+      $pass=$identificador->getPass();
+      try {
+          $sql= "SELECT `codigo`"
+          ."FROM `identificador`"
+          ."WHERE `codigo`='$codigo' AND `password`='$pass' AND `isAdmin`=1";
+          $data = $this->ejecutarConsulta($sql);
+          for ($i=0; $i < count($data) ; $i++) {
+            $identificador=new Identificador();
+           $persona = new Persona();
+           $persona->setCodigo($data[$i]['codigo']);
+           $identificador->setCodigo($persona);
+           return $identificador;
+          }
+    } catch (SQLException $e) {
+          throw new Exception('Primary key is null');
+      return null;
+      }
+  }
+
   public function selectByPersona($persona){
       $codigo=$persona->getCodigo();
       $identificador = new Identificador();
@@ -94,11 +115,9 @@ $codigo=$identificador->getCodigo()->getCodigo();
      */
   public function update($identificador){
       $rfid=$identificador->getRfid();
-$isAdmin=$identificador->getIsAdmin();
-$codigo=$identificador->getCodigo()->getCodigo();
-
+      $codigo=$identificador->getCodigo()->getCodigo();
       try {
-          $sql= "UPDATE `identificador` SET`rfid`='$rfid' ,`isAdmin`='$isAdmin' ,`codigo`='$codigo' WHERE `rfid`='$rfid' ";
+          $sql= "UPDATE `identificador` SET `codigo`='$codigo' WHERE `rfid`='$rfid' ";
          return $this->insertarConsulta($sql);
       } catch (SQLException $e) {
           throw new Exception('Primary key is null');

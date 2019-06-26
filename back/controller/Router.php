@@ -51,6 +51,9 @@ $ruta = strip_tags($_POST['ruta']);
         case "PersonaSelect":
           $rtn = PersonaController::select();
           break;
+        case "login":
+          $rtn = PersonaController::login();
+          break;
     		default:
     			$rtn="404 Ruta no encontrada.";
     			break;

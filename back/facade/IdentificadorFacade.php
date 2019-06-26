@@ -66,6 +66,18 @@ class IdentificadorFacade {
      return $result;
   }
 
+  public static function login($codigo,$pass){
+      $identificador = new Identificador();
+      $identificador->setCodigo($codigo); 
+      $identificador->setPass($pass); 
+
+     $FactoryDao=new FactoryDao(self::getGestorDefault());
+     $identificadorDao =$FactoryDao->getidentificadorDao(self::getDataBaseDefault());
+     $result = $identificadorDao->login($identificador);
+     $identificadorDao->close();
+     return $result;
+  }
+
   public static function selectByPersona($persona){
      $FactoryDao=new FactoryDao(self::getGestorDefault());
      $identificadorDao =$FactoryDao->getidentificadorDao(self::getDataBaseDefault());
@@ -81,9 +93,8 @@ class IdentificadorFacade {
    * @param isAdmin
    * @param codigo
    */
-  public static function update($rfid, $isAdmin, $codigo){
+  public static function update($rfid, $codigo){
       $identificador = self::select($rfid);
-      $identificador->setIsAdmin($isAdmin); 
       $identificador->setCodigo($codigo); 
 
      $FactoryDao=new FactoryDao(self::getGestorDefault());

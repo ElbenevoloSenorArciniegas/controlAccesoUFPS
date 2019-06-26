@@ -126,14 +126,18 @@ $isAutorizado=$intento->getIsAutorizado();
           /*$sql ="SELECT `id`, `persona`, `time`, `entrada`, `isAutorizado`"
           ."FROM `intento`"
           ."WHERE 1";*/
-          $sql="SELECT  id.`codigo`, `entrada`, `time`, `isAutorizado` FROM `intento` i INNER JOIN `identificador` id ON i.`persona` = id.`rfid` WHERE 1";
+          $sql="SELECT  `persona`, id.`codigo`, `entrada`, `time`, `isAutorizado` FROM `intento` i INNER JOIN `identificador` id ON i.`persona` = id.`rfid` WHERE 1 ORDER BY `time` DESC";
           $data = $this->ejecutarConsulta($sql);
           for ($i=0; $i < count($data) ; $i++) {
               $intento= new Intento();
            /*$identificador = new Identificador();
            $identificador->setRfid($data[$i]['persona']);*/
            $persona = new Persona();
-           $persona->setCodigo($data[$i]['codigo']);
+           $cod=$data[$i]['codigo'];
+           if($cod==0){
+            $cod.="SPLIT".$data[$i]['persona'];
+           }
+           $persona->setCodigo($cod);
            $intento->setPersona($persona);
           $intento->setTime($data[$i]['time']);
            $entrada = new Entrada();

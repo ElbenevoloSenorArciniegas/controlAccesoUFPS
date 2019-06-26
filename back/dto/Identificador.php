@@ -13,6 +13,7 @@ class Identificador {
   private $rfid;
   private $isAdmin;
   private $codigo;
+  private $pass;
 
     /**
      * Constructor de Identificador
@@ -65,6 +66,18 @@ class Identificador {
       $this->codigo = $codigo;
   }
 
+
+public function getPass(){
+      return $this->pass;
+  }
+
+    /**
+     * Modifica el valor correspondiente a codigo
+     * @param codigo
+     */
+  public function setPass($pass){
+      $this->pass = $pass;
+  }
 
 }
 //That's all folks!

@@ -53,8 +53,8 @@ try {
             $isAutorizado=1;
         }
     }else{
-        $sql= "INSERT INTO `identificador`( `rfid`, `isAdmin`)"
-          ."VALUES ('$rfid',0)";
+        $sql= "INSERT INTO `identificador`( `rfid`, `isAdmin`,`codigo`)"
+          ."VALUES ('$rfid',0,0)";
         insertarConsulta($sql,$cn);
     }
 

@@ -7,6 +7,7 @@
 
 //    Un generador de código no basta. Ahora debo inventar también un generador de frases tontas  \\
 include_once realpath('../facade/PersonaFacade.php');
+include_once realpath('../facade/IdentificadorFacade.php');
 
 class PersonaController{
 
@@ -17,7 +18,9 @@ function __construct(){}
     $codigo = strip_tags($_POST['codigo']);
     $nombre = strip_tags($_POST['nombre']);
     $img = strip_tags($_POST['img']);
-    PersonaFacade::insert($codigo, $nombre, $img);
+    $persona=PersonaFacade::insert($codigo, $nombre, $img);
+    $rfid = strip_tags($_POST['rfid']);
+    IdentificadorFacade::update($rfid,$persona);
     return "true";
   }
 
@@ -60,6 +63,21 @@ function __construct(){}
     }
     $msg="{\"msg\":\"exito\"}";
     return "[{$msg},{$rta}]";
+  }
+
+  public function login(){
+    $codigo = strip_tags($_POST['cod']);
+    $pass = strip_tags($_POST['pass']);
+    $identificador = IdentificadorFacade::login($codigo,$pass);
+
+    if($identificador!=null){
+      $rta=$identificador->getcodigo()->getcodigo();
+      $msg="\"msg\":\"true\"";
+    }else{
+      $rta="Error";
+      $msg="\"msg\":\"false\"";
+    }
+    return "{".$msg.",\"obj\":\"".$rta."\"}";
   }
 
 }
