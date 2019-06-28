@@ -30,7 +30,7 @@ $time = date('H:i:s');
 try {             
      $host = "localhost";
      $username = "root";
-     $password = "C8Tl8JBm4OAjeMe1";
+     $password = "";
      $dbName="controlaccesoufpsproduccion";
      $cn = new PDO("mysql:host=$host;dbname=$dbName;charset=utf8",$username,$password);
  }catch(Exception $e){
